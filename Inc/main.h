@@ -14,6 +14,7 @@
 #define N_FUNC_PWR 3 //number of implementations of functions setting power
 
 #include <stdio.h>
+#include <string.h>
 #define ARM_MATH_CM0
 #include "float.h"
 //#include "fenv.h"
@@ -23,8 +24,6 @@
 #include "arm_math.h"
 #include "rtd_linearization.h"
 #include "ct_assert.h"
-#include "hd44780.h"
-#include "hd44780_stm32f0xx.h"
 
 
 typedef struct __Temperature_t {

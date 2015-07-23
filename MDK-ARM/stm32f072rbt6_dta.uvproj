@@ -539,11 +539,6 @@
               <FilePath>..\Src\stm32f0xx_it.c</FilePath>
             </File>
             <File>
-              <FileName>AD7792.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Src\AD7792.c</FilePath>
-            </File>
-            <File>
               <FileName>Communication.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Src\Communication.c</FilePath>
@@ -617,6 +612,11 @@
               <FileName>dma.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Src\dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>AD779X.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Src\AD779X.c</FilePath>
             </File>
           </Files>
         </Group>

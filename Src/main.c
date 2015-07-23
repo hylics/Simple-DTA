@@ -55,13 +55,11 @@
 
 /* USER CODE BEGIN PV */
 //__IO uint8_t dma_t_cplt=1, dma_r_cplt=1;
-extern AD7792_HandleTypeDef adi1;
+extern AD779X_HandleTypeDef adi1;
 extern SavedDomain_t EepromDomain;
 SavedDomain_t Options_rw;
 TIM_OC_InitTypeDef sConfigPWM;
 HAL_StatusTypeDef sts;
-HD44780 lcd;
-HD44780_STM32F0xx_GPIO_Driver lcd_pindriver;
 volatile uint32_t systick_ms = 0;
 /* USER CODE END PV */
 
@@ -70,10 +68,6 @@ void SystemClock_Config(void);
 void MX_FREERTOS_Init(void);
 
 /* USER CODE BEGIN PFP */
-void init_lcd(void);
-void delay_lcd(uint16_t ms);
-uint32_t uint32_time_diff(uint32_t now, uint32_t before);
-void hd44780_assert_failure_handler(const char *filename, unsigned long line);
 static HAL_StatusTypeDef out_pwm_jitter(float32_t pwr) __attribute__((used));
 static HAL_StatusTypeDef out_pwm_simple(float32_t pwr) __attribute__((used));
 static HAL_StatusTypeDef out_pwm_bresenham(float32_t pwr) __attribute__((used));
@@ -180,34 +174,34 @@ int main(void)
 	/*if(EepromDomain.header != 0xABAB) {
 		ee_format(&EepromDomain);
 	}*/
-	init_lcd();
 	
-	for(uint32_t i=0; i<10; i++) {
-		static uint32_t counter2 = 0;
-		const size_t buf_size = lcd.columns_amount + 1;
-		char buf[buf_size];
-		snprintf(buf, buf_size, "%d", counter2);
-		++counter2;
-		hd44780_clear(&lcd);
-		hd44780_write_string(&lcd, buf);
-		HAL_Delay(200);
-	}
+	
+//	for(uint32_t i=0; i<10; i++) {
+//		static uint32_t counter2 = 0;
+//		const size_t buf_size = lcd.columns_amount + 1;
+//		char buf[buf_size];
+//		snprintf(buf, buf_size, "%d", counter2);
+//		++counter2;
+//		hd44780_clear(&lcd);
+//		hd44780_write_string(&lcd, buf);
+//		HAL_Delay(200);
+//	}
 
 	//Options_rw.offset[0] = 0x7000;
 	//Options_rw.crc = HAL_CRC_Calculate(&hcrc, (uint32_t*)&Options_rw, OPT_CRC_LEN); //crc32
 	//sts = SaveOptToFlash(&Options_rw, &EepromDomain); // 100% work
 
-	AD7792_Reset();
+	AD779X_Reset();
 	ADI_Init();
   
-		conf[0] = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1);
-		conf[1] = AD7792_GetRegisterValue(AD7792_REG_MODE, 2, 1);
-		conf[2] = AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1);
-		conf[3] = AD7792_GetRegisterValue(AD7792_REG_OFFSET, 2, 1);
-		conf[4] = AD7792_GetRegisterValue(AD7792_REG_FULLSCALE, 2, 1);
+		conf[0] = AD779X_GetRegisterValue(AD779X_REG_CONF, 2, 1);
+		conf[1] = AD779X_GetRegisterValue(AD779X_REG_MODE, 2, 1);
+		conf[2] = AD779X_GetRegisterValue(AD779X_REG_IO, 1, 1);
+		conf[3] = AD779X_GetRegisterValue(AD779X_REG_OFFSET, 2, 1);
+		conf[4] = AD779X_GetRegisterValue(AD779X_REG_FULLSCALE, 2, 1);
 		
-		//AD7792_Calibrate(&adi1, AD7792_MODE_CAL_SYS_ZERO, AD7792_CH_AIN2P_AIN2M);
-		conf[4] = AD7792_GetRegisterValue(AD7792_REG_FULLSCALE, 2, 1);
+		//AD779X_Calibrate(&adi1, AD779X_MODE_CAL_SYS_ZERO, AD779X_CH_AIN2P_AIN2M);
+		conf[4] = AD779X_GetRegisterValue(AD779X_REG_FULLSCALE, 2, 1);
 	
   /* USER CODE END 2 */
 
@@ -263,121 +257,8 @@ void SystemClock_Config(void)
 }
 
 /* USER CODE BEGIN 4 */
-void init_lcd(void)
-{
-  /* Распиновка дисплея */
-  const HD44780_STM32F0xx_Pinout lcd_pinout =
-  {
-    {
-      /* RS        */  { GPIOC, GPIO_PIN_9 },
-      /* ENABLE    */  { GPIOC, GPIO_PIN_8 },
-      /* RW        */  { NULL, 0 },
-      /* Backlight */  { NULL, 0 },
-      /* DP0       */  { NULL, 0 },
-      /* DP1       */  { NULL, 0 },
-      /* DP2       */  { NULL, 0 },
-      /* DP3       */  { NULL, 0 },
-      /* DP4       */  { GPIOA, GPIO_PIN_8 },
-      /* DP5       */  { GPIOA, GPIO_PIN_9 },
-      /* DP6       */  { GPIOA, GPIO_PIN_10 },
-      /* DP7       */  { GPIOA, GPIO_PIN_11 },
-    }
-  };
 
-  /* Настраиваем драйвер: указываем интерфейс драйвера (стандартный),
-     указанную выше распиновку и обработчик ошибок GPIO (необязателен). */
-  lcd_pindriver.interface = HD44780_STM32F0XX_PINDRIVER_INTERFACE;
-  /* Если вдруг захотите сами вручную настраивать GPIO для дисплея
-     (зачем бы вдруг), напишите здесь ещё (библиотека учтёт это):*/
-  //lcd_pindriver.interface.configure = NULL;
-  lcd_pindriver.pinout = lcd_pinout;
-	#ifndef NDEBUG
-  lcd_pindriver.assert_failure_handler = hd44780_assert_failure_handler; //hd44780_assert_failure_handler;
-	#else
-	lcd_pindriver.assert_failure_handler = NULL;
-	#endif
 
-  /* �?, наконец, создаём конфигурацию дисплея: указываем наш драйвер,
-     функцию задержки, обработчик ошибок дисплея (необязателен) и опции.
-     На данный момент доступны две опции - использовать или нет
-     вывод RW дисплея (в последнем случае его нужно прижать к GND),
-     и то же для управления подсветкой. */
-  const HD44780_Config lcd_config =
-  {
-    (HD44780_GPIO_Interface*)&lcd_pindriver,
-    delay_lcd
-		#ifndef NDEBUG
-    , hd44780_assert_failure_handler //hd44780_assert_failure_handler,
-		#endif
-    //HD44780_OPT_USE_RW
-  };
-
-  /* Ну, а теперь всё стандартно: подаём тактирование на GPIO,
-     инициализируем дисплей: 16x2, 4-битный интерфейс, символы 5x8 точек. */
-  //RCC_APB2PeriphClockCmd(RCC_APB2Periph_GPIOA, ENABLE);
-  hd44780_init(&lcd, HD44780_MODE_4BIT, &lcd_config, 20, 4, HD44780_CHARSIZE_5x8);
-}
-
-void delay_lcd(uint16_t ms) {
-	HAL_Delay((uint32_t)(ms>1000 ? (ms/1000 + (ms%1000 ? 1 : 0)) : 1));
-//	if(xTaskGetSchedulerState() == pdFALSE) {
-//		HAL_Delay((uint32_t)(ms));
-//	}
-//	/*else if(ms < 1000) {
-//		//
-//	}*/
-//	else if(ms>1000) {
-//		//
-//		osDelay((uint32_t)(ms/1000 + (ms%1000>0 ? 1 : 0)));
-//	}
-//	else {
-//		osDelay(1);
-//	}
-	
-//	SysTick->VAL = SysTick->LOAD;
-//  const uint32_t systick_ms_start = systick_ms;//increment in Systick handler
-//  uint16_t us = ms * 1000;
-//  while (1)
-//  {
-//    uint32_t diff = uint32_time_diff(systick_ms, systick_ms_start);
-
-//    if (diff >= ((uint32_t)us / 1000) + (us % 1000 ? 1 : 0))
-//      break;
-//  }
-	//cast types for supress warnings
-	// вызов до старта диспетчера приводит к ошибке
-	//osDelay((uint32_t)ms);
-}
-
-//uint32_t uint32_time_diff(uint32_t now, uint32_t before)
-//{
-//  return (now >= before) ? (now - before) : (UINT32_MAX - before + now);
-//}
-#ifndef NDEBUG
-void hd44780_assert_failure_handler(const char *filename, unsigned long line)
-{
-	__IO static char st_file[30];
-	__IO static unsigned long st_line;
-	
-	for (uint32_t i=0; i<30; i++) {
-		st_file[i]=*(filename+i);
-	}
-	
-	st_line	= line;
-  //(void)filename; (void)line;
-  do {} while (1);
-}
-#endif
-
- /*void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi) {
-	 //change state
-	 dma_t_cplt = 0;
- }
- 
- void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi) {
-	 //
-	 dma_r_cplt = 0;
- }*/
 /* USER CODE END 4 */
 
 #ifdef USE_FULL_ASSERT

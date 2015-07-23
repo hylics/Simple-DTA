@@ -46,13 +46,13 @@
 //#include "spi.h"
 #include "soft_spi.h"
 #include "stm32f0xx_hal.h"
-//#include "AD7792.h"
+//#include "AD779X.h"
 
 /******************************************************************************/
-/* SPI-AD7792 timeout definitions                                             */
+/* SPI-AD779X timeout definitions                                             */
 /******************************************************************************/
 
-//#define SPI_TIMEOUT			20    //20 milliseconds for one SPI transmit or receive from ad7792
+//#define SPI_TIMEOUT			20    //20 milliseconds for one SPI transmit or receive from ad779X
 #define TIMEOUT_COMMAND 2     //timeout address <-> command
 #define TIMEOUT_PACKET  50    //timeout address,command <-> address,command
 #define TIMEOUT_LH      1     //timeout CS LOW or HIGH <-> transmit or receive

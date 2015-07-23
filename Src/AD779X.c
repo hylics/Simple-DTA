@@ -1,6 +1,6 @@
 /***************************************************************************//**
- *   @file   AD7792.c
- *   @brief  Implementation of AD7792 Driver.
+ *   @file   AD779X.c
+ *   @brief  Implementation of AD779X Driver.
  *   @author Bancisor MIhai
 ********************************************************************************
  * Copyright 2012(c) Analog Devices, Inc.
@@ -43,7 +43,7 @@
 /******************************************************************************/
 /* Include Files                                                              */
 /******************************************************************************/
-#include "AD7792.h"				// AD7792 definitions.
+#include "AD779X.h"				// AD779X definitions.
 #include "Communication.h"		// Communication definitions.
 //#include "stm32f0xx_hal_conf.h" //for assert
 //#include <assert.h>
@@ -57,26 +57,26 @@
 /******************************************************************************/
 /* Private functions prototypes                                               */
 /******************************************************************************/
-//static uint32_t AD7792_GetRegisterValue(uint8_t regAddress, uint8_t size, uint8_t modifyCS);
-//static void AD7792_SetRegisterValue(uint8_t regAddress, uint32_t regValue, uint8_t size, uint8_t modifyCS);
-static void AD7792_WaitRdyGoLow(void);
+//static uint32_t AD779X_GetRegisterValue(uint8_t regAddress, uint8_t size, uint8_t modifyCS);
+//static void AD779X_SetRegisterValue(uint8_t regAddress, uint32_t regValue, uint8_t size, uint8_t modifyCS);
+static void AD779X_WaitRdyGoLow(void);
 
 
 /***************************************************************************//**
- * @brief Initializes the AD7792 and checks if the device is present.
+ * @brief Initializes the AD779X and checks if the device is present.
  *
  * @return status - Result of the initialization procedure.
  *                  Example: 1 - if initialization was successful (ID is 0x0B).
  *                           0 - if initialization was unsuccessful.
 *******************************************************************************/
-uint8_t AD7792_Init(void)
+uint8_t AD779X_Init(void)
 { 
 	uint8_t status = 0x1;
     
   //SPI_Init(0, 1000000, 1, 1);
 	ADI_PART_CS_HIGH;
-	AD7792_GetRegisterValue(AD7792_REG_ID, 1, 1);
-  if((AD7792_GetRegisterValue(AD7792_REG_ID, 1, 1) & 0x0F) != AD7792_ID)
+	AD779X_GetRegisterValue(AD779X_REG_ID, 1, 1);
+  if((AD779X_GetRegisterValue(AD779X_REG_ID, 1, 1) & 0x0F) != AD7793_ID)
 		{
 			status = 0x0;
 		}
@@ -89,7 +89,7 @@ uint8_t AD7792_Init(void)
  *
  * @return  None.    
 *******************************************************************************/
-void AD7792_Reset(void)
+void AD779X_Reset(void)
 {
 	ADI_PART_CS_HIGH;
 	SCK_HIGH;
@@ -111,12 +111,12 @@ void AD7792_Reset(void)
  *
  * @return data - The value of the selected register register.
 *******************************************************************************/
-uint32_t AD7792_GetRegisterValue(uint8_t regAddress, uint8_t size, uint8_t modifyCS) {	
+uint32_t AD779X_GetRegisterValue(uint8_t regAddress, uint8_t size, uint8_t modifyCS) {	
 	uint8_t data[4]      = {0x00};
 	uint32_t receivedData = 0x00;
   uint8_t i            = 0x00; 
     
-	data[0] = AD7792_COMM_READ |  AD7792_COMM_ADDR(regAddress);
+	data[0] = AD779X_COMM_READ |  AD779X_COMM_ADDR(regAddress);
 	//Modifying CS by this function or external
 	if(modifyCS != 0) {
 		ADI_PART_CS_LOW;
@@ -137,7 +137,7 @@ uint32_t AD7792_GetRegisterValue(uint8_t regAddress, uint8_t size, uint8_t modif
     }
     
     return (receivedData);
-} //END AD7792_GetRegisterValue()
+} //END AD779X_GetRegisterValue()
 
 
 /***************************************************************************//**
@@ -149,12 +149,12 @@ uint32_t AD7792_GetRegisterValue(uint8_t regAddress, uint8_t size, uint8_t modif
  *
  * @return  None.    
 *******************************************************************************/
-void AD7792_SetRegisterValue(uint8_t regAddress, uint32_t regValue, uint8_t size, uint8_t modifyCS) {
+void AD779X_SetRegisterValue(uint8_t regAddress, uint32_t regValue, uint8_t size, uint8_t modifyCS) {
 	uint8_t data[4]      = {0x00};	
 	uint8_t* data_ptr = (uint8_t*)&regValue;
   uint8_t bytesNr      = size;
     
-  data[0] = AD7792_COMM_WRITE |  AD7792_COMM_ADDR(regAddress);
+  data[0] = AD779X_COMM_WRITE |  AD779X_COMM_ADDR(regAddress);
   while(bytesNr != 0) {
       data[bytesNr] = *data_ptr;
       data_ptr++;
@@ -173,28 +173,28 @@ void AD7792_SetRegisterValue(uint8_t regAddress, uint32_t regValue, uint8_t size
 	}
 	//ADI_DELAY(TIMEOUT_PACKET);
 	
-} //END AD7792_SetRegisterValue()
+} //END AD779X_SetRegisterValue()
 
 /***************************************************************************//**
  * @brief  Waits for RDY pin to go low.
  *
  * @return None.
 *******************************************************************************/
-static void AD7792_WaitRdyGoLow(void) {
-    while( AD7792_RDY_STATE ) {
+static void AD779X_WaitRdyGoLow(void) {
+    while( AD779X_RDY_STATE ) {
 			//add osDelay() ???
       ;
     }
 }
 
 /**
-* @brief write config to ad7792
+* @brief write config to ad779X
 * @param *adc_instance
 * @param type - choice all register been written or specific
 * @return ADI_StatusTypeDef
 */
-ADI_StatusTypeDef AD7792_conf(AD7792_HandleTypeDef *adc_instance, op_mode_TypeDef type) {
-	/* Check the AD7792 handle allocation */
+ADI_StatusTypeDef AD779X_conf(AD779X_HandleTypeDef *adc_instance, op_mode_TypeDef type) {
+	/* Check the AD779X handle allocation */
 	if(adc_instance == NULL) {
 		return ADI_ERROR;
 	}
@@ -215,23 +215,23 @@ ADI_StatusTypeDef AD7792_conf(AD7792_HandleTypeDef *adc_instance, op_mode_TypeDe
 	
 	// REG CONF
 	if(type==reg_all || type==reg_conf) {
-		AD7792_SetRegisterValue(AD7792_REG_CONF, adc_instance->conf, 2, 1);
+		AD779X_SetRegisterValue(AD779X_REG_CONF, adc_instance->conf, 2, 1);
 	}
 	
 	// REG MODE
 	if(type==reg_all || type==reg_mode) {
-		AD7792_SetRegisterValue(AD7792_REG_MODE, adc_instance->mode, 2, 1);
+		AD779X_SetRegisterValue(AD779X_REG_MODE, adc_instance->mode, 2, 1);
 	}
 	
 	// REG IO
 	if(type==reg_all || type==reg_io) {
-		AD7792_SetRegisterValue(AD7792_REG_IO, adc_instance->io, 1, 1);
+		AD779X_SetRegisterValue(AD779X_REG_IO, adc_instance->io, 1, 1);
 	}
 	
 	// REG OFFSET
 	if(type==reg_all || type==reg_offset) {
 		if(channel<=3) {
-			AD7792_SetRegisterValue(AD7792_REG_OFFSET, adc_instance->offset[channel], 2, 1);
+			AD779X_SetRegisterValue(AD779X_REG_OFFSET, adc_instance->offset[channel], 2, 1);
 		}
 		else return ADI_ERROR;
 	}
@@ -239,7 +239,7 @@ ADI_StatusTypeDef AD7792_conf(AD7792_HandleTypeDef *adc_instance, op_mode_TypeDe
 	// REG FULLSCALE
 	if(type==reg_all || type==reg_full_scale) {
 		if(channel<=3) {
-		  AD7792_SetRegisterValue(AD7792_REG_FULLSCALE, adc_instance->fullscale[channel], 2, 1);
+		  AD779X_SetRegisterValue(AD779X_REG_FULLSCALE, adc_instance->fullscale[channel], 2, 1);
 		}
 		else return ADI_ERROR;
 	}
@@ -251,37 +251,37 @@ ADI_StatusTypeDef AD7792_conf(AD7792_HandleTypeDef *adc_instance, op_mode_TypeDe
 }
 
 /*my func*/
-/*int AD7792_conf(uint32_t gain, uint32_t channel, uint32_t current) {
+/*int AD779X_conf(uint32_t gain, uint32_t channel, uint32_t current) {
 	uint32_t command;
 	int retval = 0;
 	
-	command = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1); // CS is modified by SPI read/write functions.
-	command &= ~AD7792_CONF_GAIN(0xFF);
-  command |= AD7792_CONF_GAIN(gain);
+	command = AD779X_GetRegisterValue(AD779X_REG_CONF, 2, 1); // CS is modified by SPI read/write functions.
+	command &= ~AD779X_CONF_GAIN(0xFF);
+  command |= AD779X_CONF_GAIN(gain);
 	
-	command &= ~AD7792_CONF_CHAN(0xFF);
-  command |= AD7792_CONF_CHAN(channel);
+	command &= ~AD779X_CONF_CHAN(0xFF);
+  command |= AD779X_CONF_CHAN(channel);
 	
-	command |= AD7792_CONF_UNIPOLAR;
+	command |= AD779X_CONF_UNIPOLAR;
 	
 	
-	AD7792_SetRegisterValue(AD7792_REG_CONF, command, 2, 1);
-	//if( (AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1) & command) != command ) {
+	AD779X_SetRegisterValue(AD779X_REG_CONF, command, 2, 1);
+	//if( (AD779X_GetRegisterValue(AD779X_REG_CONF, 2, 1) & command) != command ) {
 		  //retval = 1;
 	}
 	
 	command &= ~AD7702_RATE_1_120ms;
 	command |= AD7702_RATE_1_120ms;
-  AD7792_SetRegisterValue(AD7792_REG_MODE, command, 2, 1); // CS is modified by SPI read/write functions.
-	//if( (AD7792_GetRegisterValue(AD7792_REG_MODE, 2, 1) & command) != command) {
+  AD779X_SetRegisterValue(AD779X_REG_MODE, command, 2, 1); // CS is modified by SPI read/write functions.
+	//if( (AD779X_GetRegisterValue(AD779X_REG_MODE, 2, 1) & command) != command) {
       //retval = 2;
 	}
 	
 
 	command = 0x0;
-	command |= AD7792_IEXCEN(current);
-	AD7792_SetRegisterValue(AD7792_REG_IO, command, 1, 1);
-	//if( (AD7792_GetRegisterValue(AD7792_REG_IO, 1, 1) & command) != command) {
+	command |= AD779X_IEXCEN(current);
+	AD779X_SetRegisterValue(AD779X_REG_IO, command, 1, 1);
+	//if( (AD779X_GetRegisterValue(AD779X_REG_IO, 1, 1) & command) != command) {
 		  //retval = 3;
 	}
 	
@@ -291,19 +291,19 @@ ADI_StatusTypeDef AD7792_conf(AD7792_HandleTypeDef *adc_instance, op_mode_TypeDe
 
 
 /***************************************************************************//**
- * @brief Selects the channel of AD7792.
+ * @brief Selects the channel of AD779X.
  *
  * @param  channel - ADC channel selection.
  *
  * @return  None.    
 *******************************************************************************/
-void AD7792_SetChannel(uint32_t channel) {
+void AD779X_SetChannel(uint32_t channel) {
     uint32_t command;
     
-    command = AD7792_GetRegisterValue(AD7792_REG_CONF, 2, 1); // CS is modified by SPI read/write functions.
-    command &= ~AD7792_CONF_CHAN(0xFF);
-    command |= AD7792_CONF_CHAN(channel);
-    AD7792_SetRegisterValue(AD7792_REG_CONF, command, 2, 1); // CS is modified by SPI read/write functions.
+    command = AD779X_GetRegisterValue(AD779X_REG_CONF, 2, 1); // CS is modified by SPI read/write functions.
+    command &= ~AD779X_CONF_CHAN(0xFF);
+    command |= AD779X_CONF_CHAN(channel);
+    AD779X_SetRegisterValue(AD779X_REG_CONF, command, 2, 1); // CS is modified by SPI read/write functions.
 }
 
 /***************************************************************************//**
@@ -315,15 +315,15 @@ void AD7792_SetChannel(uint32_t channel) {
  *
  * @return none.
 *******************************************************************************/
-void AD7792_Calibrate(AD7792_HandleTypeDef *adc_instance, uint8_t mode, uint8_t channel) {
-	adc_instance->mode &= !AD7792_MODE_SEL(mode);
-	adc_instance->mode |= AD7792_MODE_SEL(mode);
-	adc_instance->conf &= ~AD7792_CONF_CHAN(0xFF);
-	adc_instance->conf |= AD7792_CONF_CHAN(channel);
-	AD7792_conf(adc_instance, reg_conf);
+void AD779X_Calibrate(AD779X_HandleTypeDef *adc_instance, uint8_t mode, uint8_t channel) {
+	adc_instance->mode &= !AD779X_MODE_SEL(mode);
+	adc_instance->mode |= AD779X_MODE_SEL(mode);
+	adc_instance->conf &= ~AD779X_CONF_CHAN(0xFF);
+	adc_instance->conf |= AD779X_CONF_CHAN(channel);
+	AD779X_conf(adc_instance, reg_conf);
   ADI_PART_CS_LOW; 
-  AD7792_SetRegisterValue(AD7792_REG_MODE, adc_instance->mode, 2, 0); // CS is not modified by SPI read/write functions.
-  AD7792_WaitRdyGoLow();
+  AD779X_SetRegisterValue(AD779X_REG_MODE, adc_instance->mode, 2, 0); // CS is not modified by SPI read/write functions.
+  AD779X_WaitRdyGoLow();
   ADI_PART_CS_HIGH;
 }
 
@@ -332,30 +332,31 @@ void AD7792_Calibrate(AD7792_HandleTypeDef *adc_instance, uint8_t mode, uint8_t 
  *
  * @return regData - Result of a single analog-to-digital conversion.
 *******************************************************************************/
-uint32_t AD7792_SingleConversion(AD7792_HandleTypeDef *adc_instance)
+uint32_t AD779X_SingleConversion(AD779X_HandleTypeDef *adc_instance)
 {
     //uint32_t command = 0x2009; //default 0x200A
     uint32_t regData = 0x0;
     
-	  adc_instance->mode &= ~AD7792_MODE_SEL(0xF);
-    adc_instance->mode |= AD7792_MODE_SEL(AD7792_MODE_SINGLE);
+	  adc_instance->mode &= ~AD779X_MODE_SEL(0xF);
+    adc_instance->mode |= AD779X_MODE_SEL(AD779X_MODE_SINGLE);
 	
     ADI_PART_CS_LOW;
 	  //ADI_DELAY(TIMEOUT_LH);
-	  //AD7792_conf(adc_instance, reg_mode); // remeber about CS!
-    //AD7792_SetRegisterValue(AD7792_REG_MODE, command, 2, 0);// CS is not modified by SPI read/write functions.
-	  AD7792_SetRegisterValue(AD7792_REG_MODE, adc_instance->mode, 2, 0);// CS is not modified by SPI read/write functions.
-    AD7792_WaitRdyGoLow();
+	  //AD779X_conf(adc_instance, reg_mode); // remeber about CS!
+    //AD779X_SetRegisterValue(AD779X_REG_MODE, command, 2, 0);// CS is not modified by SPI read/write functions.
+	  AD779X_SetRegisterValue(AD779X_REG_MODE, adc_instance->mode, 2, 0);// CS is not modified by SPI read/write functions.
+    AD779X_WaitRdyGoLow();
 	  //ADI_DELAY(TIMEOUT_WRGL);
 	  //ADI_DELAY(5);
-    regData = AD7792_GetRegisterValue(AD7792_REG_DATA, 3, 0); // CS is not modified by SPI read/write functions.
+    regData = AD779X_GetRegisterValue(AD779X_REG_DATA, 3, 0); // CS is not modified by SPI read/write functions.
     //ADI_DELAY(TIMEOUT_LH);
 	  ADI_PART_CS_HIGH;
 	
 	  /*bad solution for problem reading 2 bytes as 3 bytes*/
-	  if((regData & 0xF00000) != 0) {
+	  /*solved if soft SPI used?*/
+	  /*if((regData & 0xF00000) != 0) {
 		  regData>>=8;
-	  }
+	  }*/
 
     return(regData);
 }
@@ -365,19 +366,19 @@ uint32_t AD7792_SingleConversion(AD7792_HandleTypeDef *adc_instance)
  *
  * @return samplesAverage - The average of the conversion results.
 *******************************************************************************/
-uint32_t AD7792_ContinuousReadAvg(uint8_t sampleNumber) {
+uint32_t AD779X_ContinuousReadAvg(uint8_t sampleNumber) {
     uint32_t samplesAverage = 0x0;
     uint32_t command        = 0x0;
     uint8_t count          = 0x0;
     
-    command = AD7792_MODE_SEL(AD7792_MODE_CONT);
+    command = AD779X_MODE_SEL(AD779X_MODE_CONT);
     ADI_PART_CS_LOW;
 	  //ADI_DELAY(TIMEOUT_LH);
-    AD7792_SetRegisterValue(AD7792_REG_MODE, command, 2, 0);// CS is not modified by SPI read/write functions.
+    AD779X_SetRegisterValue(AD779X_REG_MODE, command, 2, 0);// CS is not modified by SPI read/write functions.
     for(count = 0;count < sampleNumber;count ++)
     {
-        AD7792_WaitRdyGoLow();
-        samplesAverage += AD7792_GetRegisterValue(AD7792_REG_DATA, 2, 0);  // CS is not modified by SPI read/write functions.
+        AD779X_WaitRdyGoLow();
+        samplesAverage += AD779X_GetRegisterValue(AD779X_REG_DATA, 2, 0);  // CS is not modified by SPI read/write functions.
     }
 		//ADI_DELAY(TIMEOUT_LH);
     ADI_PART_CS_HIGH;

@@ -49,13 +49,12 @@ osThreadId uartTaskHandle;
 osMutexId Mutex_T_Handle;
 
 /* USER CODE BEGIN Variables */
-extern AD7792_HandleTypeDef adi1;
+extern AD779X_HandleTypeDef adi1;
 //extern SavedDomain_t EepromDomain;
 extern SavedDomain_t Options_rw;
 extern TIM_HandleTypeDef htim3;
 extern UART_HandleTypeDef huart4;
 extern HAL_StatusTypeDef (*pf_output[N_FUNC_PWR])(float32_t pwr);
-extern HD44780 lcd;
 //extern HD44780_STM32F0xx_GPIO_Driver lcd_pindriver;
 __IO static Temperature_t temp_handle = {0.0f};
 arm_pid_instance_f32 pid_instance_1;
@@ -213,20 +212,20 @@ void StartAdcTask(void const * argument)
 		//la_adc_task = 1;
 		HAL_UART_Transmit(&huart4, msg1, sizeof(msg1), 5);
 		
-		adi1.io &= ~AD7792_IEXCDIR(0x3);
-		adi1.io |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT2_IEXC2_IOUT1);
+		adi1.io &= ~AD779X_IEXCDIR(0x3);
+		adi1.io |= AD779X_IEXCDIR(AD779X_DIR_IEXC1_IOUT2_IEXC2_IOUT1);
 		
 		taskENTER_CRITICAL();
-		AD7792_conf(&adi1, reg_io); // CS is modified by SPI read/write functions.
-		raw_conv_rtd = AD7792_SingleConversion(&adi1);
+		AD779X_conf(&adi1, reg_io); // CS is modified by SPI read/write functions.
+		raw_conv_rtd = AD779X_SingleConversion(&adi1);
 		taskEXIT_CRITICAL();
 		
-		adi1.io &= ~AD7792_IEXCDIR(0x3);
-		adi1.io |= AD7792_IEXCDIR(AD7792_DIR_IEXC1_IOUT1_IEXC2_IOUT2);
+		adi1.io &= ~AD779X_IEXCDIR(0x3);
+		adi1.io |= AD779X_IEXCDIR(AD779X_DIR_IEXC1_IOUT1_IEXC2_IOUT2);
 		
 		taskENTER_CRITICAL();
-		AD7792_conf(&adi1, reg_io); // CS is modified by SPI read/write functions.
-		raw_conv_rtd += AD7792_SingleConversion(&adi1);
+		AD779X_conf(&adi1, reg_io); // CS is modified by SPI read/write functions.
+		raw_conv_rtd += AD779X_SingleConversion(&adi1);
 		taskEXIT_CRITICAL();
 		
 		filt_conv_rtd = rec_filter(raw_conv_rtd, 55, 8); // 45=30s, 55=20s
@@ -247,7 +246,7 @@ void StartAdcTask(void const * argument)
 		//la_adc_task = 0;
 		
 		//osDelay(2000);
-		vTaskDelayUntil(&LastWakeTime, adc_delay);//2000
+		vTaskDelayUntil(&LastWakeTime, adc_delay); //1000 ms
   }
 	//vTaskDelete(NULL);
   /* USER CODE END StartAdcTask */
