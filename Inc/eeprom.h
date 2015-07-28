@@ -103,6 +103,11 @@ typedef __packed struct __T_step_t{
 	uint32_t type:2; //type of step
 }T_step_t;
 
+typedef __packed struct __gain_scale_t{
+	float32_t a;
+	float32_t b;
+}gain_scale_t;
+
 
 typedef __packed struct __SavedDomain_t{
 	uint16_t header;
@@ -116,6 +121,7 @@ typedef __packed struct __SavedDomain_t{
 	input_t input; // define used temperature sensor
 	out_pf_t pf_out; //used function to set output
 	T_step_t prog[N_PROG][N_STEP]; //temperature program
+	gain_scale_t scale[8];
 	uint32_t cnt_fw; //flash write counter
 	uint32_t padding; //for aligning size of packed structure
 	uint32_t crc;

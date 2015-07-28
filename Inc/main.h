@@ -12,6 +12,8 @@
 //calculate crc32 of options structure without crc word
 #define OPT_CRC_LEN (uint32_t)(sizeof(SavedDomain_t)/sizeof(uint32_t) - 1)
 #define N_FUNC_PWR 3 //number of implementations of functions setting power
+#define DIFF_SCALE_MAX (uint32_t)16777216*0.7
+#define DIFF_SCALE_MIN (uint32_t)16777216*0.3
 
 #include <stdio.h>
 #include <string.h>

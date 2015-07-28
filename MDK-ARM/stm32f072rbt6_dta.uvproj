@@ -599,16 +599,6 @@
               <FilePath>..\Src\soft_spi.c</FilePath>
             </File>
             <File>
-              <FileName>hd44780.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Src\hd44780.c</FilePath>
-            </File>
-            <File>
-              <FileName>hd44780_stm32f0xx.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\Src\hd44780_stm32f0xx.c</FilePath>
-            </File>
-            <File>
               <FileName>dma.c</FileName>
               <FileType>1</FileType>
               <FilePath>..\Src\dma.c</FilePath>

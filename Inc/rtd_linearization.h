@@ -56,7 +56,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /* defines */
 #define R_REF 2000
-#define ADC_MAX 65536
+#define ADC_MAX 16777216
 //#define R_ZERO 32768
 #define TMIN (-200)  // = minimum temperature in degC
 #define TMAX (540)  // = maximum temperature in degC
