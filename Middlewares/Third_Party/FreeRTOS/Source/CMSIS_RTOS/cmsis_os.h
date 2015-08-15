@@ -26,7 +26,7 @@
  *  
  *----------------------------------------------------------------------------
  *
- * Portions COPYRIGHT 2014 STMicroelectronics
+ * Portions COPYRIGHT 2015 STMicroelectronics
  * Portions Copyright (c) 2013 ARM LIMITED
  * All rights reserved.
  * Redistribution and use in source and binary forms, with or without
@@ -57,7 +57,7 @@
   ******************************************************************************
   * @file    cmsis_os.h
   * @author  MCD Application Team
-  * @date    04-December-2014
+  * @date    27-March-2015
   * @brief   Header of cmsis_os.c
   *          A new set of APIs are added in addition to existing ones, these APIs 
   *          are specific to FreeRTOS.
@@ -200,7 +200,7 @@ used throughout the whole project.
 #define osFeature_MessageQ     1       ///< Message Queues:  1=available, 0=not available
 #define osFeature_Signals      8       ///< maximum number of Signal Flags available per thread
 #define osFeature_Semaphore    1      ///< osFeature_Semaphore function: 1=available, 0=not available
-#define osFeature_Wait         1       ///< osWait function: 1=available, 0=not available
+#define osFeature_Wait         0       ///< osWait function: 1=available, 0=not available
 #define osFeature_SysTick      1       ///< osKernelSysTick functions: 1=available, 0=not available
 
 #ifdef  __cplusplus
@@ -545,7 +545,7 @@ osStatus osTimerDelete (osTimerId timer_id);
 /// Set the specified Signal Flags of an active thread.
 /// \param[in]     thread_id     thread ID obtained by \ref osThreadCreate or \ref osThreadGetId.
 /// \param[in]     signals       specifies the signal flags of the thread that should be set.
-/// \return previous signal flags of the specified thread or 0x80000000 in case of incorrect parameters.
+/// \return osOK if successful, osErrorOS if failed.
 /// \note MUST REMAIN UNCHANGED: \b osSignalSet shall be consistent in every CMSIS-RTOS.
 int32_t osSignalSet (osThreadId thread_id, int32_t signals);
 
@@ -784,7 +784,7 @@ extern struct os_mailQ_cb *os_mailQ_cb_##name \
 extern osMailQDef_t os_mailQ_def_##name
 #else                            // define the object
 #define osMailQDef(name, queue_sz, type) \
-struct os_mailQ_cb *os_mailQ_cb_##name \
+struct os_mailQ_cb *os_mailQ_cb_##name; \
 const osMailQDef_t os_mailQ_def_##name =  \
 { (queue_sz), sizeof (type), (&os_mailQ_cb_##name) }
 #endif
@@ -857,6 +857,17 @@ void osSystickHandler(void);
 osThreadState osThreadGetState(osThreadId thread_id);
 #endif /* INCLUDE_eTaskGetState */
 
+#if ( INCLUDE_eTaskGetState == 1 )
+/**
+* @brief Check if a thread is already suspended or not.
+* @param thread_id thread ID obtained by \ref osThreadCreate or \ref osThreadGetId.
+* @retval status code that indicates the execution status of the function.
+*/
+
+osStatus osThreadIsSuspended(osThreadId thread_id);
+
+#endif /* INCLUDE_eTaskGetState */
+
 /**
 * @brief  Suspend execution of a thread.
 * @param   thread_id   thread ID obtained by \ref osThreadCreate or \ref osThreadGetId.
@@ -886,11 +897,12 @@ osStatus osThreadResumeAll (void);
 /**
 * @brief  Delay a task until a specified time
 * @param   PreviousWakeTime   Pointer to a variable that holds the time at which the 
-*          task was last unblocked.
+*          task was last unblocked. PreviousWakeTime must be initialised with the current time
+*          prior to its first use (PreviousWakeTime = osKernelSysTick() )
 * @param   millisec    time delay value
 * @retval  status code that indicates the execution status of the function.
 */
-osStatus osDelayUntil (uint32_t PreviousWakeTime, uint32_t millisec);
+osStatus osDelayUntil (uint32_t *PreviousWakeTime, uint32_t millisec);
 
 /**
 * @brief   Lists all the current threads, along with their current state 
@@ -899,7 +911,7 @@ osStatus osDelayUntil (uint32_t PreviousWakeTime, uint32_t millisec);
 *          will be written
 * @retval  status code that indicates the execution status of the function.
 */
-osStatus osThreadList (int8_t *buffer);
+osStatus osThreadList (uint8_t *buffer);
 
 /**
 * @brief  Receive an item from a queue without removing the item from the queue.
@@ -914,7 +926,7 @@ osEvent osMessagePeek (osMessageQId queue_id, uint32_t millisec);
 * @param  mutex_def     mutex definition referenced with \ref osMutex.
 * @retval  mutex ID for reference by other functions or NULL in case of error..
 */
-osMutexId osRecursiveMutexCreate (osMutexDef_t *mutex_def);
+osMutexId osRecursiveMutexCreate (const osMutexDef_t *mutex_def);
 
 /**
 * @brief  Release a Recursive Mutex

@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f0xx_hal_dma_ex.h
   * @author  MCD Application Team
-  * @version V1.2.1
-  * @date    09-January-2015
+  * @version V1.3.0
+  * @date    26-June-2015
   * @brief   Header file of DMA HAL Extension module.
   ******************************************************************************
   * @attention
@@ -50,9 +50,10 @@
   * @{
   */
 
-/** @addtogroup DMAEx
+/** @defgroup DMAEx DMAEx
+  * @brief DMA HAL module driver
   * @{
-  */ 
+  */
 
 /* Exported types ------------------------------------------------------------*/ 
 /* Exported constants --------------------------------------------------------*/
@@ -781,4 +782,3 @@
 #endif /* __STM32F0xx_HAL_DMA_EX_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-

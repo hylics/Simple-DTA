@@ -1,7 +1,6 @@
 /**
   ******************************************************************************
   * File Name          : freertos.c
-  * Date               : 28/07/2015 18:45:03
   * Description        : Code for freertos applications
   ******************************************************************************
   *
@@ -87,6 +86,7 @@ void MX_FREERTOS_Init(void); /* (MISRA C 2004 rule 8.1) */
 /* USER CODE BEGIN FunctionPrototypes */
 extern void init_lcd(void);
 /* USER CODE END FunctionPrototypes */
+
 /* Hook prototypes */
 void vApplicationIdleHook(void);
 void vApplicationStackOverflowHook(xTaskHandle xTask, signed char *pcTaskName);

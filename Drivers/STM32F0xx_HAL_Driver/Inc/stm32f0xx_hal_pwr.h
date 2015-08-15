@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f0xx_hal_pwr.h
   * @author  MCD Application Team
-  * @version V1.2.1
-  * @date    09-January-2015
+  * @version V1.3.0
+  * @date    26-June-2015
   * @brief   Header file of PWR HAL module.
   ******************************************************************************
   * @attention
@@ -50,7 +50,7 @@
   * @{
   */
 
-/** @addtogroup PWR PWR HAL module Driver 
+/** @addtogroup PWR PWR
   * @{
   */
 

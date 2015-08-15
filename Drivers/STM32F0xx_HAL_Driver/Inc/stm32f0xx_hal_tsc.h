@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f0xx_hal_tsc.h
   * @author  MCD Application Team
-  * @version V1.2.1
-  * @date    09-January-2015
+  * @version V1.3.0
+  * @date    26-June-2015
   * @brief   This file contains all the functions prototypes for the TSC firmware 
   *          library.
   ******************************************************************************
@@ -282,9 +282,9 @@ typedef struct
 /** @defgroup TSC_Synchronization_pin_polarity TSC Synchronization pin polarity
   * @{
   */    
-#define TSC_SYNC_POL_FALL      ((uint32_t)0)
-#define TSC_SYNC_POL_RISE_HIGH (TSC_CR_SYNCPOL)
-#define IS_TSC_SYNC_POL(VAL) (((VAL) == TSC_SYNC_POL_FALL) || ((VAL) == TSC_SYNC_POL_RISE_HIGH))
+#define TSC_SYNC_POLARITY_FALLING      ((uint32_t)0)
+#define TSC_SYNC_POLARITY_RISING (TSC_CR_SYNCPOL)
+#define IS_TSC_SYNC_POL(VAL) (((VAL) == TSC_SYNC_POLARITY_FALLING) || ((VAL) == TSC_SYNC_POLARITY_RISING))
 /**
   * @}
   */

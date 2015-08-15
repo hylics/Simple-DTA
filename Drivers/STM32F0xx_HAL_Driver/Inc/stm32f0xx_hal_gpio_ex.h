@@ -2,8 +2,8 @@
   ******************************************************************************
   * @file    stm32f0xx_hal_gpio_ex.h
   * @author  MCD Application Team
-  * @version V1.2.1
-  * @date    09-January-2015
+  * @version V1.3.0
+  * @date    26-June-2015
   * @brief   Header file of GPIO HAL Extension module.
   ******************************************************************************
   * @attention
@@ -50,7 +50,7 @@
   * @{
   */
 
-/** @defgroup GPIOEx GPIOEx Extended HAL module driver
+/** @defgroup GPIOEx GPIOEx
   * @{
   */ 
 
@@ -82,6 +82,7 @@
 #define GPIO_AF1_USART1       ((uint8_t)0x01)  /*!< AF1: USART1 Alternate Function mapping    */
 #define GPIO_AF1_EVENTOUT     ((uint8_t)0x01)  /*!< AF1: EVENTOUT Alternate Function mapping  */
 #define GPIO_AF1_I2C1         ((uint8_t)0x01)  /*!< AF1: I2C1 Alternate Function mapping      */
+#define GPIO_AF1_IR           ((uint8_t)0x01)  /*!< AF1: IR Alternate Function mapping        */
 
 /* AF 2 */
 #define GPIO_AF2_TIM1         ((uint8_t)0x02)  /*!< AF2: TIM1 Alternate Function mapping      */
@@ -808,5 +809,4 @@
 #endif /* __STM32F0xx_HAL_GPIO_EX_H */
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
-
 

@@ -1,7 +1,6 @@
 /**
   ******************************************************************************
   * File Name          : CRC.c
-  * Date               : 28/07/2015 18:45:01
   * Description        : This file provides code for the configuration
   *                      of the CRC instances.
   ******************************************************************************
@@ -82,10 +81,10 @@ void HAL_CRC_MspDeInit(CRC_HandleTypeDef* hcrc)
   /* USER CODE END CRC_MspDeInit 0 */
     /* Peripheral clock disable */
     __CRC_CLK_DISABLE();
+  }
   /* USER CODE BEGIN CRC_MspDeInit 1 */
 
   /* USER CODE END CRC_MspDeInit 1 */
-  }
 } 
 
 /* USER CODE BEGIN 1 */

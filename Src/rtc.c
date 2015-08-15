@@ -1,7 +1,6 @@
 /**
   ******************************************************************************
   * File Name          : RTC.c
-  * Date               : 28/07/2015 18:45:03
   * Description        : This file provides code for the configuration
   *                      of the RTC instances.
   ******************************************************************************
@@ -119,10 +118,10 @@ void HAL_RTC_MspDeInit(RTC_HandleTypeDef* hrtc)
   /* USER CODE END RTC_MspDeInit 0 */
     /* Peripheral clock disable */
     __HAL_RCC_RTC_DISABLE();
+  }
   /* USER CODE BEGIN RTC_MspDeInit 1 */
 
   /* USER CODE END RTC_MspDeInit 1 */
-  }
 } 
 
 /* USER CODE BEGIN 1 */

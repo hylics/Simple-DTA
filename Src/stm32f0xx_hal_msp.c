@@ -1,7 +1,6 @@
 /**
   ******************************************************************************
   * File Name          : stm32f0xx_hal_msp.c
-  * Date               : 28/07/2015 18:45:06
   * Description        : This file provides code for the MSP Initialization 
   *                      and de-Initialization codes.
   ******************************************************************************
@@ -47,6 +46,8 @@ void HAL_MspInit(void)
   /* USER CODE BEGIN MspInit 0 */
 
   /* USER CODE END MspInit 0 */
+
+  __SYSCFG_CLK_ENABLE();
 
   /* System interrupt init*/
 /* SysTick_IRQn interrupt configuration */
